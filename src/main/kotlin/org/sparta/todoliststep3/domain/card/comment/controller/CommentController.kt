@@ -25,8 +25,8 @@ class CommentController(
     }
 
     @PutMapping("/cards/{cardId}/comments/{commentId}")
-    fun updateComment(@PathVariable cardId: Long,@PathVariable commentId: Long,@RequestBody updateCommentRequest: CreateCommentRequest){
-        TODO()
+    fun updateComment(@PathVariable cardId: Long,@PathVariable commentId: Long,@RequestBody updateCommentRequest: CreateCommentRequest):ResponseEntity<CommentResponse>{
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.updateComment(cardId, commentId, updateCommentRequest))
     }
 
     @DeleteMapping("/cards/{cardId}/comments/{commentId}")

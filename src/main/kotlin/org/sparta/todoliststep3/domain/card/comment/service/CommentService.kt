@@ -36,8 +36,13 @@ class CommentService(
     }
 
 
-    fun updateComment(cardId:Long,commentId:Long){
-        TODO()
+    fun updateComment(cardId:Long,commentId:Long,updateCommentRequest: CreateCommentRequest): CommentResponse {
+        val card=cardRepository.findByIdOrNull(cardId) ?: throw IllegalArgumentException("존재하지 않는 카드임")
+        val comment= commentRepository.findByIdOrNull(commentId)?: throw IllegalArgumentException("존재하지 않는 댓글임")
+
+        comment.description=updateCommentRequest.description
+
+        return commentRepository.save(comment).toResponse()
     }
 
 
