@@ -27,9 +27,9 @@ class CommentService(
         val card=cardRepository.findByIdOrNull(cardId) ?: throw IllegalArgumentException("존재하지 않는 카드임")
         return commentRepository.save(
             Comment(
-                description = card.description,
-                commenterName = "일단 대기"
-//                card= card
+                description = createCommentRequest.description,
+                commenterName = "댓글 작성자 이름은 로그인한 작성자 이름",
+                card= card
 
             )
         ).toResponse()
