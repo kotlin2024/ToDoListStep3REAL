@@ -5,11 +5,16 @@ import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import org.sparta.todoliststep3.domain.card.comment.dto.CommentResponse
 import org.sparta.todoliststep3.domain.card.model.Card
+import org.sparta.todoliststep3.domain.user.model.Users
 
 
 @Entity
 @Table(name = "comments")
 class Comment(
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    val users: Users,
 
     @Column(name = "comment_description")
     var description: String,

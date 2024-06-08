@@ -8,6 +8,7 @@ import org.sparta.todoliststep3.domain.card.comment.model.Comment
 import org.sparta.todoliststep3.domain.card.comment.model.toResponse
 import org.sparta.todoliststep3.domain.card.comment.repository.CommentRepository
 import org.sparta.todoliststep3.domain.card.repository.CardRepository
+import org.sparta.todoliststep3.domain.user.model.Users
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -26,13 +27,15 @@ class CommentService(
 
 
     @Transactional
-    fun createComment(cardId:Long, createCommentRequest: CreateCommentRequest): CommentResponse {
+    fun createComment(cardId:Long, createCommentRequest: CreateCommentRequest,currentUser: Users): CommentResponse {
         val card=cardRepository.findByIdOrNull(cardId) ?: throw IllegalArgumentException("존재하지 않는 카드임")
+
         return commentRepository.save(
             Comment(
                 description = createCommentRequest.description,
                 commenterName = "댓글 작성자 이름은 로그인한 작성자 이름",
-                card= card
+                card= card,
+                users = currentUser
 
             )
         ).toResponse()
@@ -40,9 +43,12 @@ class CommentService(
 
 
     @Transactional
-    fun updateComment(cardId:Long,commentId:Long,updateCommentRequest: CreateCommentRequest): CommentResponse {
+    fun updateComment(cardId:Long,commentId:Long,updateCommentRequest: CreateCommentRequest, currentUser: Users): CommentResponse {
         val card=cardRepository.findByIdOrNull(cardId) ?: throw IllegalArgumentException("존재하지 않는 카드임")
         val comment= commentRepository.findByIdOrNull(commentId)?: throw IllegalArgumentException("존재하지 않는 댓글임")
+
+        if(currentUser.userEmail!=comment.users.userEmail) throw IllegalArgumentException("현재 로그인한 유저 이메일과 작성자 이메일이 다름")
+
 
         comment.description=updateCommentRequest.description
 
@@ -51,9 +57,11 @@ class CommentService(
 
 
     @Transactional
-    fun deleteComment(cardId:Long,commentId:Long){
+    fun deleteComment(cardId:Long,commentId:Long,currentUser: Users){
         val card=cardRepository.findByIdOrNull(cardId) ?: throw IllegalArgumentException("존재하지 않는 카드임")
         val comment= commentRepository.findByIdOrNull(commentId)?: throw IllegalArgumentException("존재하지 않는 댓글임")
+
+        if(currentUser.userEmail!=comment.users.userEmail) throw IllegalArgumentException("현재 로그인한 유저 이메일과 작성자 이메일이 다름")
 
         commentRepository.delete(comment)
     }

@@ -33,7 +33,7 @@ class CardController(
         return ResponseEntity.status(HttpStatus.OK).body(cardService.getCardById(cardId))
     }
 
-    @PreAuthorize("hasRole('NORMAL') or hasRole('ADMIN')" )
+    @PreAuthorize("hasRole('NORMAL') or hasRole('ADMIN')")
     @PostMapping
     fun createCard(@RequestBody createCardRequest: CreateCardRequest):ResponseEntity<CardResponse>{
 
