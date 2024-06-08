@@ -19,12 +19,15 @@ class CardController(
     private val userService: UserService,
 ) {
 
-    @PreAuthorize("hasRole('NORMAL')")
+
     @GetMapping()
     fun getCards(): ResponseEntity<List<CardResponse>> {
         return ResponseEntity.status(HttpStatus.OK).body(cardService.getCards())
     }
-    @PreAuthorize("hasRole('NORMAL') or hasRole('ADMIN')")
+
+
+
+
     @GetMapping("/{cardId}")
     fun getCardById(@PathVariable cardId:Long) : ResponseEntity<CardResponse> {
         return ResponseEntity.status(HttpStatus.OK).body(cardService.getCardById(cardId))
@@ -45,12 +48,22 @@ class CardController(
     @PreAuthorize("hasRole('NORMAL') or hasRole('ADMIN')")
     @PutMapping("/{cardId}")
     fun updateCardById(@PathVariable cardId:Long,@RequestBody updateCardRequest: CreateCardRequest):ResponseEntity<CardResponse>{
-        return ResponseEntity.status(HttpStatus.OK).body(cardService.updateCard(updateCardRequest,cardId))
+
+        val userPrincipal = SecurityContextHolder.getContext().authentication.principal as UserPrincipal
+        val currentUser = userService.getUserByEmail(userPrincipal.userEmail)
+
+        return ResponseEntity.status(HttpStatus.OK).body(cardService.updateCard(updateCardRequest,cardId,currentUser))
     }
+
+
     @PreAuthorize("hasRole('NORMAL') or hasRole('ADMIN')")
     @DeleteMapping("/{cardId}")
     fun deleteCardById(@PathVariable cardId:Long):ResponseEntity<Unit>{
-        cardService.deleteCard(cardId)
+
+        val userPrincipal = SecurityContextHolder.getContext().authentication.principal as UserPrincipal
+        val currentUser = userService.getUserByEmail(userPrincipal.userEmail)
+
+        cardService.deleteCard(cardId,currentUser)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 

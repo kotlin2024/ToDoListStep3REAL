@@ -29,6 +29,7 @@ class SecurityConfig(
                     "/signup",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
+                    "/cards/**"//????? 요거 의미가 있나
                 ).permitAll()
                     .anyRequest().authenticated()
             }

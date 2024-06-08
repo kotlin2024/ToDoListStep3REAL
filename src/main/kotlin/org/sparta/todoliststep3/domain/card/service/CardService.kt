@@ -39,8 +39,11 @@ class CardService(
        ).toResponse()
     }
 
-    fun updateCard(updateCardRequest: CreateCardRequest,cardID: Long): CardResponse {
+    fun updateCard(updateCardRequest: CreateCardRequest,cardID: Long,currentUser: Users): CardResponse {
         val updateCard=cardRepository.findByIdOrNull(cardID)?: throw IllegalArgumentException("업데이트할때 id틀릴시 나오는 문구")
+
+        if(currentUser.userEmail!=updateCard.users.userEmail) throw IllegalArgumentException("요청한 이메일과 현재 로그인된 이메일이랑 다름")
+
         val (title, description) = updateCardRequest
 
         updateCard.title=title
@@ -49,8 +52,13 @@ class CardService(
         return cardRepository.save(updateCard).toResponse()
     }
 
-    fun deleteCard(cardID:Long) {
+    fun deleteCard(cardID:Long, currentUser: Users) {
         val deleteCard=cardRepository.findByIdOrNull(cardID)?:throw IllegalArgumentException("삭제할려는데 해당 id에 카드 없음")
-        cardRepository.delete(deleteCard)
+        if(currentUser.userEmail== deleteCard.users.userEmail){
+            cardRepository.delete(deleteCard)
+        }
+        else{
+            throw IllegalArgumentException("아몰라")
+        }
     }
 }
