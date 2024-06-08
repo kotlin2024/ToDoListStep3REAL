@@ -15,8 +15,8 @@ class CommentController(
 ) {
 
     @GetMapping("/cards/{cardId}/comments")
-    fun getComment(@PathVariable cardId:Long){
-        TODO()
+    fun getComment(@PathVariable cardId:Long): ResponseEntity<List<CommentResponse>> {
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.getComment(cardId))
     }
 
     @PostMapping("/cards/{cardId}/comments")
@@ -30,7 +30,8 @@ class CommentController(
     }
 
     @DeleteMapping("/cards/{cardId}/comments/{commentId}")
-    fun deleteComment(@PathVariable cardId: Long,@PathVariable commentId: Long){
-        TODO()
+    fun deleteComment(@PathVariable cardId: Long,@PathVariable commentId: Long): ResponseEntity<Unit>{
+        commentService.deleteComment(cardId, commentId)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }

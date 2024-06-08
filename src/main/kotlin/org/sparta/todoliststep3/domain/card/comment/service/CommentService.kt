@@ -1,6 +1,7 @@
 package org.sparta.todoliststep3.domain.card.comment.service
 
 import jakarta.persistence.EntityNotFoundException
+import jakarta.transaction.Transactional
 import org.sparta.todoliststep3.domain.card.comment.dto.CommentResponse
 import org.sparta.todoliststep3.domain.card.comment.dto.CreateCommentRequest
 import org.sparta.todoliststep3.domain.card.comment.model.Comment
@@ -18,11 +19,13 @@ class CommentService(
 
 
 
-    fun getComment(){
-        TODO()
+    fun getComment(cardId: Long): List<CommentResponse>{
+        val card= cardRepository.findByIdOrNull(cardId) ?: throw EntityNotFoundException("존재하지 않는 카드")
+        return commentRepository.findAllByCard(card).map { it.toResponse() }
     }
 
 
+    @Transactional
     fun createComment(cardId:Long, createCommentRequest: CreateCommentRequest): CommentResponse {
         val card=cardRepository.findByIdOrNull(cardId) ?: throw IllegalArgumentException("존재하지 않는 카드임")
         return commentRepository.save(
@@ -36,6 +39,7 @@ class CommentService(
     }
 
 
+    @Transactional
     fun updateComment(cardId:Long,commentId:Long,updateCommentRequest: CreateCommentRequest): CommentResponse {
         val card=cardRepository.findByIdOrNull(cardId) ?: throw IllegalArgumentException("존재하지 않는 카드임")
         val comment= commentRepository.findByIdOrNull(commentId)?: throw IllegalArgumentException("존재하지 않는 댓글임")
@@ -46,7 +50,11 @@ class CommentService(
     }
 
 
+    @Transactional
     fun deleteComment(cardId:Long,commentId:Long){
-        TODO()
+        val card=cardRepository.findByIdOrNull(cardId) ?: throw IllegalArgumentException("존재하지 않는 카드임")
+        val comment= commentRepository.findByIdOrNull(commentId)?: throw IllegalArgumentException("존재하지 않는 댓글임")
+
+        commentRepository.delete(comment)
     }
 }
