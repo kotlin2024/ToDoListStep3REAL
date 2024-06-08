@@ -3,9 +3,12 @@ package org.sparta.todoliststep3.domain.card.controller
 import org.sparta.todoliststep3.domain.card.dto.CardResponse
 import org.sparta.todoliststep3.domain.card.dto.CreateCardRequest
 import org.sparta.todoliststep3.domain.card.service.CardService
+import org.sparta.todoliststep3.domain.user.service.UserService
+import org.sparta.todoliststep3.infra.security.UserPrincipal
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 
@@ -13,9 +16,10 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class CardController(
     private val cardService: CardService,
+    private val userService: UserService,
 ) {
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasRole('NORMAL')")
     @GetMapping()
     fun getCards(): ResponseEntity<List<CardResponse>> {
         return ResponseEntity.status(HttpStatus.OK).body(cardService.getCards())
@@ -29,8 +33,15 @@ class CardController(
     @PreAuthorize("hasRole('NORMAL') or hasRole('ADMIN')" )
     @PostMapping
     fun createCard(@RequestBody createCardRequest: CreateCardRequest):ResponseEntity<CardResponse>{
-        return ResponseEntity.status(HttpStatus.CREATED).body(cardService.createCard(createCardRequest))
+
+        val userPrincipal = SecurityContextHolder.getContext().authentication.principal as UserPrincipal
+        val currentUser = userService.getUserByEmail(userPrincipal.userEmail)
+
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(cardService.createCard(createCardRequest,currentUser))
     }
+
+
     @PreAuthorize("hasRole('NORMAL') or hasRole('ADMIN')")
     @PutMapping("/{cardId}")
     fun updateCardById(@PathVariable cardId:Long,@RequestBody updateCardRequest: CreateCardRequest):ResponseEntity<CardResponse>{

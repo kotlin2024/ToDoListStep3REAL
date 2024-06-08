@@ -27,18 +27,15 @@ class JwtAuthenticationFilter(
             pureToken=request.getHeader(AUTHORIZATION).substring(7)
         }
 
-        logger.debug("Extracted token: $pureToken")
 
         if(pureToken!=null){
-            logger.debug(" $pureToken  현재 puretoken 값")
             jwtTokenProvider.validateToken(pureToken)
                 .onSuccess {
-                    val userEmail=it.payload.subject
+                    //val userEmail=it.payload.subject
+                    val userEmail =it.payload.get("userEmail",String::class.java)
                     val userRole=it.payload.get("userRole",String::class.java)
 
-                    logger.debug("User email: $userEmail, User role: $userRole")
-
-                    val userPrincipal= UserPrincipal(userRole,setOf(userEmail))
+                    val userPrincipal= UserPrincipal(userEmail = userEmail, userRole = setOf(userRole)) //setOf(userEmail),userRole
                     val authentication = JwtAuthenticationToken(userPrincipal, WebAuthenticationDetailsSource().buildDetails(request))
 
                     SecurityContextHolder.getContext().authentication = authentication

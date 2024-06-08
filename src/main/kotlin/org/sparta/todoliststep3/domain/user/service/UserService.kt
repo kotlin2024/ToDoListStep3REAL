@@ -48,4 +48,10 @@ class UserService(
             )
         ).toResponse()
     }
+
+    fun getUserByEmail(userEmail: String): Users{
+
+        val usersEmail =userRepository.findByUserEmail(userEmail) ?: throw IllegalArgumentException("해당 이메일이 없음")
+        return usersEmail
+    }
 }

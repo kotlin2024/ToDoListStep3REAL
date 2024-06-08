@@ -5,6 +5,9 @@ import org.sparta.todoliststep3.domain.card.dto.CreateCardRequest
 import org.sparta.todoliststep3.domain.card.model.Card
 import org.sparta.todoliststep3.domain.card.model.toResponse
 import org.sparta.todoliststep3.domain.card.repository.CardRepository
+import org.sparta.todoliststep3.domain.user.model.Users
+import org.sparta.todoliststep3.domain.user.repository.UserRepository
+import org.sparta.todoliststep3.infra.security.UserPrincipal
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -12,8 +15,9 @@ import org.springframework.stereotype.Service
 @Service
 class CardService(
     private val cardRepository: CardRepository,
+    private val userRepository: UserRepository,
 
-){
+    ){
 
     fun getCards(): List<CardResponse>{
         val cardGetAll= cardRepository.findAll()
@@ -25,13 +29,12 @@ class CardService(
         return cardGetId.toResponse()
     }
 
-    fun createCard(createCardRequest: CreateCardRequest): CardResponse{
+    fun createCard(createCardRequest: CreateCardRequest,currentUser: Users): CardResponse{
        return cardRepository.save(
            Card(
                title = createCardRequest.title,
                description = createCardRequest.description,
-               userName = "로그인하면 자동으로 생성되게 해야하는데..."
-
+               users = currentUser
            )
        ).toResponse()
     }
