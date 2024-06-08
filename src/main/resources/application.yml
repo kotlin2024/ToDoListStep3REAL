@@ -11,3 +11,19 @@ auth:
     issuer: team.HJP.com
     secret: PO4c8z41Hia5gJG3oeuFJMRYBB4Ws4aZ
     validity: 3600000
+
+
+
+
+logging:
+  level:
+    arg:
+      hibernate:
+        SQL: debug
+        orm:
+          jdbc:
+            bind: trace
+
+      springframework:
+        security: debug
+
