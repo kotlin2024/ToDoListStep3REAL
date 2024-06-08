@@ -1,7 +1,10 @@
 package org.sparta.todoliststep3.domain.card.comment.model
 
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import org.sparta.todoliststep3.domain.card.comment.dto.CommentResponse
+import org.sparta.todoliststep3.domain.card.model.Card
 
 
 @Entity
@@ -14,8 +17,10 @@ class Comment(
     @Column(name = "commenter_name")
     var commenterName: String,
 
-//    @Column(name = "commenter_email")
-//    val card: Card
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="card_id",nullable=false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    val card: Card
 
 ){
     @Id
