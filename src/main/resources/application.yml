@@ -27,3 +27,11 @@ logging:
       springframework:
         security: debug
 
+
+
+oauth2:
+  kakao:
+    client_id: "3215a3e64cedbd8258a05d024ab3ed66"
+    redirect_url: "http://localhost:8080/oauth2/callback/kakao"
+    auth_server_base_url: "https://kauth.kakao.com"
+    resource_server_base_url: "https://kapi.kakao.com"
